@@ -1,0 +1,9 @@
+flimter is short for FLIckr Machine Tag browsER (explorER, if you like).
+
+Browse Flickr machine tag namespaces, predicates and values. For more, see
+these posts about machine tags and new API methods (which enabled this hack
+to be built):
+
+http://www.flickr.com/groups/api/discuss/72157594497877875/
+http://tech.groups.yahoo.com/group/yws-flickr/message/4545
+
