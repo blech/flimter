@@ -6,6 +6,7 @@
 	<script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
 	<script type="text/javascript">
     var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5"; // yes, this is probably bad, but you don't get the secret at least
+    var initial = {};
 
 	  var l0json =  function(data){
                     // TODO consider metaprogramming for json handers
@@ -26,6 +27,10 @@
                     } else {
                       $("ul#top div").show();
                       $("ul#top div#load").hide();
+
+                      if (initial['namespace']) {
+                        console.log("need to highlight '"+initial['namespace']+"'");
+                      }                        
                     }
                   };
 	
@@ -149,6 +154,14 @@
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
+      tag = window.location.search.substr(1);
+      if (tag) {
+        items = tag.split(":");
+        initial["namespace"] = items[0];
+        if (items[1]) { initial["predicate"] = items[1] }
+      }
+      
+      console.log(initial);
 		});
 		
 	</script>
