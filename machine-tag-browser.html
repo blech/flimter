@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="jquery-scrollTo-min.js"></script>
+	<script type="text/javascript">
+    var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5";
+
+	  var l0json =  function(data){
+                    // console.log(data);
+                    for (index in data.namespaces.namespace) {
+                      ns = data.namespaces.namespace[index]
+                      $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/li>");
+                    }
+            
+                    $("li.level0").click(l0click);
+
+                    // do we need to recurse?
+                    if (data.namespaces.page < data.namespaces.pages) {
+                      page = data.namespaces.page+1;
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                        l0json);
+                    } else {
+                      $("ul#top div").show();
+                      $("ul#top div#load").hide();
+                    }
+                  };
+	
+	  var l0click = function(){
+	                  var load = false;
+                    if (!$(this).children("ul").length) { load = true; }
+                    ns = $(this).attr("id");
+                    $(this).append("<ul><div><"+"/div><"+"/ul>");
+                    $(this).find("ul div").css({
+                      width: "250",
+                      height:"100%",
+                      overflowX:"hidden",
+                      overflowY:"auto",
+                    });
+
+                    $(this).siblings().css({backgroundColor:"#fff"});
+                    $(this).css({backgroundColor:"rgb(27,115,213)"});
+
+                    $(this).siblings().find("ul").hide();
+                    $(this).children("ul").show();
+						          
+						        if (load) {
+                      // TODO loading feedback
+                      $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
+
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&api_key="+apikey+"&namespace="+ns+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                        l1json
+                      );
+                    }
+                    
+                    return false; 
+                   
+                  };
+	
+	  var l1json =  function(data){
+                    $("li#"+ns+" ul div img").remove();
+
+                    for (index in data.predicates.predicate) {
+                      predicate = data.predicates.predicate[index]
+                      $("li#"+ns+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/li>");
+                    }
+
+                    if (data.predicates.page < data.predicates.pages) {
+                      more = data.predicates.total - data.predicates.perpage
+                      $("li#"+ns+" ul div").append("<li>... ("+more+" not shown)<"+"/li>");
+                    }
+              
+                    $("li.level1").click(l1click)
+                  };
+	
+	  var l1click = function(){
+	                  var load = false;
+                    if (!$(this).children("ul").length) { load = true };
+
+                    id = $(this).attr("id");
+                    ns = $(this).parent().parent().parent().attr("id");
+                    $(this).append("<ul id='"+ns+"_"+id+"'><div><"+"/div><"+"/ul>");
+                    $(this).find("ul#"+ns+"_"+id+" div").css({
+                      width: "250",
+                      height:"100%",
+                      overflowX:"hidden",
+                      overflowY:"auto",
+                    });
+
+                    $(this).siblings().css({backgroundColor:"#fff"});
+                    $(this).css({backgroundColor:"rgb(27,115,213)"});
+
+                    $(this).siblings().find("ul").hide();
+                    $(this).children("ul").show();
+
+                    if (load) {
+                      $(this).find("ul#"+ns+"_"+id+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
+
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+ns+"&predicate="+id+"&api_key="+apikey+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                        l2json
+                      );
+                    }
+                    
+                    return false; // suppress level 0 click event
+                  };
+      
+	  var l2json =  function(data){
+                    $("ul#"+ns+"_"+id+" div img").remove();
+
+                    for (index in data.values.value) {
+                      value = data.values.value[index]
+                      $("ul#"+ns+"_"+id+" div").append("<li class='level2'>"+value._content+" <span class='count'>"+value.usage+"<"+"/li>");
+                    }
+
+                    if (data.values.page < data.values.pages) {
+                      more = data.values.total-data.values.perpage
+                      $("ul#"+ns+"_"+id+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
+                    }
+                    $("li.level2").click(function() { return false; })
+                  };
+	
+		
+		$(document).ready( function() {
+      // $("ul#top").wrapInner(document.createElement("div"));
+      // sod it, do this by hand, then set CSS by jQuery
+      $("ul#top div:first").css({
+        height:"100%",
+        width:"250px",
+        overflowX:"hidden",
+        overflowY:"auto"
+      });
+      $("ul#top div").hide();
+      $("ul#top div#load").show();
+      
+      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
+        l0json);
+
+		});
+		
+	</script>
+	<style type="text/css">
+    /* set styles directly rather than using jQuery.css() calls */
+    ul {
+      display:block;
+			position:absolute;
+			top:-1px;
+			left:250px;
+			padding:0;
+			margin:0;
+			width:250px;
+			height:600px;
+			border:1px solid rgb(178,178,178);
+      background:#fff;
+    }
+
+    ul#top {
+      width:750px;
+    }
+
+    li {
+      list-style: none;
+      padding: 1px;
+    }
+
+	  li span.count {
+      font-size: 80%;
+      line-height:160%;
+	    color:#ccc;
+	  }
+  	</style>
+	<title>flickr machine tag explorer</title>
+</head>
+<body>
+<h3>flickr machine tag explorer</h3>
+
+<p>Browse Flickr machine tag namespaces, predicates and values. For more, see <a href="http://www.flickr.com/groups/api/discuss/72157594497877875/">this post about machine tags</a> and <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4545">this post about new API methods</a> (which enabled this hack to be built).</p>
+
+<p>A Flickr hack by <a href="http://husk.org/">Paul Mison</a>. Browser view code inspired by <a href="http://code.google.com/p/jquery-column-navigation/">jQuery Column Navigator</a>. Not associated with Flickr (but I use their pulser because I'm lazy, sorry).</p>
+
+<p>DONE: <strike>get past predicate page one</strike> / <strike>CSS styling for values</strike> / <strike>don't allow multiple clicks</strike><br>
+   ALSO: <strike>nicer browser view</strike> / <strike>Fix up remaining browse edge cases</strike> / <strike>loading indicator</strike><br>
+   TODO: make ... work in predicates+values / sort by count (total or child) / offer all namespaces browser / debug wonky clicks / final column links to picture view</p>
+
+<div style="position:relative; left:-250px;">
+  <ul id="top">
+    <div></div>
+    <div id='load'>
+      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:359px;'>
+    </div>
+</ul>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-5271055-2");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+      
+</body>
+</html>
