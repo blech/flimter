@@ -8,6 +8,8 @@
     var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5"; // yes, this is probably bad, but you don't get the secret at least
 
 	  var l0json =  function(data){
+                    // TODO consider metaprogramming for json handers
+
                     // console.log(data);
                     for (index in data.namespaces.namespace) {
                       ns = data.namespaces.namespace[index]
@@ -28,9 +30,17 @@
                   };
 	
 	  var l0click = function(){
+                    // TODO sort out commonalities here and in l1click
+                    ns = $(this).attr("id");
+
+                    // Figure out if we've already asked for this predicate
 	                  var load = false;
                     if (!$(this).children("ul").length) { load = true; }
-                    ns = $(this).attr("id");
+
+                    // Add and initialise the list element and the div
+                    // container that's used to allow scrolling
+                    // (Shouldn't this also be conditional on load?
+                    //  Probably means this is leaking a bit. Oops.)
                     $(this).append("<ul><div><"+"/div><"+"/ul>");
                     $(this).find("ul div").css({
                       width: "250",
@@ -39,16 +49,19 @@
                       overflowY:"auto",
                     });
 
+                    // show this item as selected, and others as not
                     $(this).siblings().css({backgroundColor:"#fff"});
                     $(this).css({backgroundColor:"rgb(27,115,213)"});
 
+                    // hide other children, show this one
                     $(this).siblings().find("ul").hide();
                     $(this).children("ul").show();
 						          
 						        if (load) {
-                      // TODO loading feedback
+                      // show a spinner
                       $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
 
+                      // actually call Flickr's API
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&api_key="+apikey+"&namespace="+ns+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l1json
                       );
@@ -140,7 +153,9 @@
 		
 	</script>
 	<style type="text/css">
-    /* set styles directly rather than using jQuery.css() calls */
+    /* set styles directly rather than using jQuery.css() calls,
+     * or indeed an extra file, so that it's easier to edit/deploy.
+     */
     ul {
       display:block;
 			position:absolute;
@@ -191,6 +206,7 @@
 
 </div>
 
+<!-- I thought I'd like to know if anyone was watching -->
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
