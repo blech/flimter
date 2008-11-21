@@ -128,14 +128,14 @@
 
                     for (index in data.values.value) {
                       value = data.values.value[index]
-                      $("ul#"+ns+"_"+id+" div").append("<li class='level2'>"+value._content+" <span class='count'>"+value.usage+"<"+"/li>");
+                      $("ul#"+ns+"_"+id+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+ns+":"+id+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/li>");
                     }
 
                     if (data.values.page < data.values.pages) {
                       more = data.values.total-data.values.perpage
                       $("ul#"+ns+"_"+id+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
                     }
-                    $("li.level2").click(function() { return false; })
+                    $("li.level2").click(function() { window.location.href = $(this).find('a').attr('href'); })
                   };
 	
 		
@@ -188,13 +188,18 @@
 
     li {
       list-style: none;
-      padding: 1px;
+      padding: 2px;
     }
 
 	  li span.count {
       font-size: 80%;
       line-height:160%;
 	    color:#ccc;
+	  }
+	  
+	  li a {
+      text-decoration:none;
+      color:#000;
 	  }
   	</style>
 	<title>flickr machine tag explorer</title>
