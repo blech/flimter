@@ -23,7 +23,7 @@
 
                     // do we need to recurse?
                     if (data.namespaces.page < data.namespaces.pages) {
-                      page = data.namespaces.page+1;
+                      var page = data.namespaces.page+1;
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
                     } else {
@@ -81,12 +81,12 @@
                     $("li#"+ns+" ul div img").remove();
 
                     for (var index = 0; index < data.predicates.predicate.length; index++) {
-                      predicate = data.predicates.predicate[index]
+                      var predicate = data.predicates.predicate[index]
                       $("li#"+ns+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/li>");
                     }
 
                     if (data.predicates.page < data.predicates.pages) {
-                      more = data.predicates.total - data.predicates.perpage
+                      var more = data.predicates.total - data.predicates.perpage
                       $("li#"+ns+" ul div").append("<li>... ("+more+" not shown)<"+"/li>");
                     }
               
@@ -130,12 +130,12 @@
                     $("ul#"+ns+"_"+id+" div img").remove();
 
                     for (var index = 0; index < data.values.value.length; index++) {
-                      value = data.values.value[index]
+                      var value = data.values.value[index]
                       $("ul#"+ns+"_"+id+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+ns+":"+id+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/li>");
                     }
 
                     if (data.values.page < data.values.pages) {
-                      more = data.values.total-data.values.perpage
+                      var more = data.values.total-data.values.perpage
                       $("ul#"+ns+"_"+id+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
                     }
                     $("li.level2").click(function() { window.location.href = $(this).find('a').attr('href'); })
