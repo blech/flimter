@@ -14,7 +14,9 @@
                     // console.log(data);
                     for (index in data.namespaces.namespace) {
                       ns = data.namespaces.namespace[index]
-                      $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/li>");
+                      if (ns.usage > 2) {
+                        $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/li>");
+                      }
                     }
             
                     $("li.level0").click(l0click);
