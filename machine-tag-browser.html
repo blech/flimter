@@ -7,6 +7,10 @@
 	<script type="text/javascript">
     var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5"; // yes, this is probably bad, but you don't get the secret at least
     var initial = {};
+    
+    // TODO - shouldn't be globals, should pass state around in closures
+    var selected_namespace;
+    var selected_predicate;
 
 	  var l0json =  function(data){
                     // TODO consider metaprogramming for json handers
@@ -38,7 +42,7 @@
 	
 	  var l0click = function(){
                     // TODO sort out commonalities here and in l1click
-                    ns = $(this).attr("id");
+                    selected_namespace = $(this).attr("id");
 
                     // Figure out if we've already asked for this predicate
 	                  var load = false;
@@ -68,7 +72,7 @@
                       $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
 
                       // actually call Flickr's API
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&api_key="+apikey+"&namespace="+ns+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&api_key="+apikey+"&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l1json
                       );
                     }
@@ -78,30 +82,30 @@
                   };
 	
 	  var l1json =  function(data){
-                    $("li#"+ns+" ul div img").remove();
+                    $("li#"+selected_namespace+" ul div img").remove();
 
-                    for (var index = 0; index < data.predicates.predicate.length; index++) {
+                    for (var index=0; index < data.predicates.predicate.length; index++) {
                       var predicate = data.predicates.predicate[index]
-                      $("li#"+ns+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/li>");
+                      $("li#"+selected_namespace+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/li>");
                     }
 
                     if (data.predicates.page < data.predicates.pages) {
                       var more = data.predicates.total - data.predicates.perpage
-                      $("li#"+ns+" ul div").append("<li>... ("+more+" not shown)<"+"/li>");
+                      $("li#"+selected_namespace+" ul div").append("<li>... ("+more+" not shown)<"+"/li>");
                     }
               
                     $("li.level1").click(l1click)
                   };
 	
 	  var l1click = function(){
-	                  var load = false;
-                    id = $(this).attr("id");
-                    ns = $(this).parent().parent().parent().attr("id");
+                    selected_predicate = $(this).attr("id");
+                    // ns = $(this).parent().parent().parent().attr("id");
 
+	                  var load = false;
                     if (!$(this).children("ul").length) {
                       load = true;
-                      $(this).append("<ul id='"+ns+"_"+id+"'><div><"+"/div><"+"/ul>");
-                      $(this).find("ul#"+ns+"_"+id+" div").css({
+                      $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"'><div><"+"/div><"+"/ul>");
+                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").css({
                         width: "250",
                         height:"100%",
                         overflowX:"hidden",
@@ -116,9 +120,9 @@
                     $(this).children("ul").show();
 
                     if (load) {
-                      $(this).find("ul#"+ns+"_"+id+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
+                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
 
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+ns+"&predicate="+id+"&api_key="+apikey+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l2json
                       );
                     }
@@ -127,16 +131,16 @@
                   };
       
 	  var l2json =  function(data){
-                    $("ul#"+ns+"_"+id+" div img").remove();
+                    $("ul#"+selected_namespace+"_"+selected_predicate+" div img").remove();
 
                     for (var index = 0; index < data.values.value.length; index++) {
                       var value = data.values.value[index]
-                      $("ul#"+ns+"_"+id+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+ns+":"+id+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/li>");
+                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+selected_namespace+":"+selected_predicate+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/li>");
                     }
 
                     if (data.values.page < data.values.pages) {
                       var more = data.values.total-data.values.perpage
-                      $("ul#"+ns+"_"+id+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
+                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
                     }
                     $("li.level2").click(function() { window.location.href = $(this).find('a').attr('href'); })
                   };
