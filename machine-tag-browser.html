@@ -19,7 +19,7 @@
                     for (var index = 0; index < data.namespaces.namespace.length; index++) {
                       var ns = data.namespaces.namespace[index]
                       if (ns.usage > 2) {
-                        $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/li>");
+                        $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/span><span class='children'>"ns.predicates+"</"+"span><"+"/li>");
                       }
                     }
 
@@ -86,7 +86,7 @@
 
                     for (var index=0; index < data.predicates.predicate.length; index++) {
                       var predicate = data.predicates.predicate[index]
-                      $("li#"+selected_namespace+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/li>");
+                      $("li#"+selected_namespace+" ul div").append("<li id='"+predicate._content+"' class='level1'>"+predicate._content+" <span class='count'>"+predicate.usage+"<"+"/span><"+"/li>");
                     }
 
                     if (data.predicates.page < data.predicates.pages) {
@@ -135,7 +135,7 @@
 
                     for (var index = 0; index < data.values.value.length; index++) {
                       var value = data.values.value[index]
-                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+selected_namespace+":"+selected_predicate+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/li>");
+                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+selected_namespace+":"+selected_predicate+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/span><"+"/li>");
                     }
 
                     if (data.values.page < data.values.pages) {
@@ -154,6 +154,8 @@
     $(document).ready( function() {
       // $("ul#top").wrapInner(document.createElement("div"));
       // sod it, do this by hand, then set CSS by jQuery
+      $("ul").height($(window).height()-$('div#blurb').height()-48);
+
       $("ul#top div:first").css({
         height:"100%",
         width:"250px",
@@ -163,8 +165,8 @@
       $("ul#top div").hide();
       $("ul#top div#load").show();
 
-      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
-        l0json);
+//       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
+//         l0json);
 
       tag = window.location.search.substr(1);
       if (tag) {
@@ -181,6 +183,18 @@
     /* set styles directly rather than using jQuery.css() calls,
      * or indeed an extra file, so that it's easier to edit/deploy.
      */
+    body {
+      background:#fff;
+      color:#000;
+      font:13/16px Arial, Helvetica, sans-serif;
+    }
+    
+    h1 {
+      font: 16px;
+      font-weight: normal;
+      line-height:10px;
+    }
+
     ul {
       display:block;
       position:absolute;
@@ -209,6 +223,13 @@
       color:#ccc;
     }
 
+    li span.children {
+      font-size: 80%;
+      line-height:160%;
+      color:#ccc;
+      display:none;
+    }
+
     li a {
       text-decoration:none;
       color:#000;
@@ -217,14 +238,16 @@
   <title>flickr machine tag explorer</title>
 </head>
 <body>
-<h3>flickr machine tag explorer</h3>
-
-<p>Browse Flickr machine tag namespaces, predicates and values. For more, see <a href="http://www.flickr.com/groups/api/discuss/72157594497877875/">this post about machine tags</a> and <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4545">this post about new API methods</a> (which enabled this hack to be built).</p>
-
-<p>A Flickr hack by <a href="http://husk.org/">Paul Mison</a>. Browser view code inspired by <a href="http://code.google.com/p/jquery-column-navigation/">jQuery Column Navigator</a>. Not associated with Flickr (but I use their pulser because I'm lazy, sorry). <a href="http://github.com/blech/flimter/tree/master">At Github.</a></p>
-
-<p>TODO: make ... work in predicates+values / sort by count (total or child) / offer all namespaces browser / debug wonky clicks /<br>
-         final column links to picture view / take arguments for initial namespace/predicate (ta yoz)</p>
+<div id="blurb">
+  <h1>a flickr machine tag explorer</h1>
+  
+  <p>Browse Flickr machine tag namespaces, predicates and values. For more, see <a href="http://www.flickr.com/groups/api/discuss/72157594497877875/">this post about machine tags</a> and <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4545">this post about new API methods</a> (which enabled this hack to be built).</p>
+  
+  <p>A Flickr hack by <a href="http://husk.org/">Paul Mison</a>. Browser view code inspired by <a href="http://code.google.com/p/jquery-column-navigation/">jQuery Column Navigator</a>. Not associated with Flickr (but I use their pulser because I'm lazy, sorry). <a href="http://github.com/blech/flimter/tree/master">At Github.</a></p>
+  
+  <p>TODO: make ... work in predicates+values / sort by count (total or child) / offer all namespaces browser / debug wonky clicks /<br>
+           final column links to picture view / take arguments for initial namespace/predicate (ta yoz)</p>
+</div>
 
 <div style="position:relative; left:-250px;">
   <ul id="top">
