@@ -1,18 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
-	<script type="text/javascript">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+  <script type="text/javascript">
     var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5"; // yes, this is probably bad, but you don't get the secret at least
     var initial = {};
-    
+
     // TODO - shouldn't be globals, should pass state around in closures
     var selected_namespace;
     var selected_predicate;
 
-	  var l0json =  function(data){
+    var l0json =  function(data){
                     // TODO consider metaprogramming for json handers
 
                     // console.log(data);
@@ -22,7 +22,7 @@
                         $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/li>");
                       }
                     }
-            
+
                     $("li.level0").click(l0click);
 
                     // do we need to recurse?
@@ -39,13 +39,13 @@
                       }                        
                     }
                   };
-	
-	  var l0click = function(){
+
+    var l0click = function(){
                     // TODO sort out commonalities here and in l1click
                     selected_namespace = $(this).attr("id");
 
                     // Figure out if we've already asked for this predicate
-	                  var load = false;
+                    var load = false;
                     if (!$(this).children("ul").length) {
                       load = true;
                       // Add and initialise the list element and the div
@@ -66,8 +66,8 @@
                     // hide other children, show this one
                     $(this).siblings().find("ul").hide();
                     $(this).children("ul").show();
-						          
-						        if (load) {
+
+                    if (load) {
                       // show a spinner
                       $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
 
@@ -76,12 +76,12 @@
                         l1json
                       );
                     }
-                    
+
                     return false; 
-                   
+
                   };
-	
-	  var l1json =  function(data){
+
+    var l1json =  function(data){
                     $("li#"+selected_namespace+" ul div img").remove();
 
                     for (var index=0; index < data.predicates.predicate.length; index++) {
@@ -93,15 +93,15 @@
                       var more = data.predicates.total - data.predicates.perpage
                       $("li#"+selected_namespace+" ul div").append("<li>... ("+more+" not shown)<"+"/li>");
                     }
-              
+
                     $("li.level1").click(l1click)
                   };
-	
-	  var l1click = function(){
+
+    var l1click = function(){
                     selected_predicate = $(this).attr("id");
                     // ns = $(this).parent().parent().parent().attr("id");
 
-	                  var load = false;
+                    var load = false;
                     if (!$(this).children("ul").length) {
                       load = true;
                       $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"'><div><"+"/div><"+"/ul>");
@@ -126,11 +126,11 @@
                         l2json
                       );
                     }
-                    
+
                     return false; // suppress level 0 click event
                   };
-      
-	  var l2json =  function(data){
+
+    var l2json =  function(data){
                     $("ul#"+selected_namespace+"_"+selected_predicate+" div img").remove();
 
                     for (var index = 0; index < data.values.value.length; index++) {
@@ -144,15 +144,14 @@
                     }
                     $("li.level2").click(function() { window.location.href = $(this).find('a').attr('href'); })
                   };
-	
-		
-		if (!window.console) {
-		  window.console = {
-		    'log':function() {}
-		  }
-		}
-		
-		$(document).ready( function() {
+
+    if (!window.console) {
+      window.console = {
+        'log':function() {}
+      }
+    }
+
+    $(document).ready( function() {
       // $("ul#top").wrapInner(document.createElement("div"));
       // sod it, do this by hand, then set CSS by jQuery
       $("ul#top div:first").css({
@@ -163,7 +162,7 @@
       });
       $("ul#top div").hide();
       $("ul#top div#load").show();
-      
+
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
@@ -173,25 +172,25 @@
         initial["namespace"] = items[0];
         if (items[1]) { initial["predicate"] = items[1] }
       }
-      
+
       console.log(initial);
-		});
-		
-	</script>
-	<style type="text/css">
+    });
+
+  </script>
+  <style type="text/css">
     /* set styles directly rather than using jQuery.css() calls,
      * or indeed an extra file, so that it's easier to edit/deploy.
      */
     ul {
       display:block;
-			position:absolute;
-			top:-1px;
-			left:250px;
-			padding:0;
-			margin:0;
-			width:250px;
-			height:600px;
-			border:1px solid rgb(178,178,178);
+      position:absolute;
+      top:-1px;
+      left:250px;
+      padding:0;
+      margin:0;
+      width:250px;
+      height:600px;
+      border:1px solid rgb(178,178,178);
       background:#fff;
     }
 
@@ -204,18 +203,18 @@
       padding: 2px;
     }
 
-	  li span.count {
+    li span.count {
       font-size: 80%;
       line-height:160%;
-	    color:#ccc;
-	  }
-	  
-	  li a {
+      color:#ccc;
+    }
+
+    li a {
       text-decoration:none;
       color:#000;
-	  }
-  	</style>
-	<title>flickr machine tag explorer</title>
+    }
+    </style>
+  <title>flickr machine tag explorer</title>
 </head>
 <body>
 <h3>flickr machine tag explorer</h3>
@@ -247,6 +246,6 @@ try {
 var pageTracker = _gat._getTracker("UA-5271055-2");
 pageTracker._trackPageview();
 } catch(err) {}</script>
-      
+
 </body>
 </html>
