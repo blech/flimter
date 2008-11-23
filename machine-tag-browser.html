@@ -12,21 +12,36 @@
     var selected_namespace;
     var selected_predicate;
 
+    function hide_uncommon() {
+      console.log("hiding uncommon namespaces");
+      $("li.level0").each(function() {
+        count = $(this).children("span.count").text();
+          console.log($(this).text()+", "+count);
+        if (count < 10) {
+          $(this).addClass("uncommon");
+        }
+      });
+
+      $("li.uncommon").slideUp();
+    }
+
+    function show_uncommon() {
+      $("li.uncommon").slideDown();
+    }
+
     var l0json =  function(data){
                     // TODO consider metaprogramming for json handers
 
                     // console.log(data);
                     for (var index = 0; index < data.namespaces.namespace.length; index++) {
                       var ns = data.namespaces.namespace[index]
-                      if (ns.usage > 2) {
-                        $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/span><span class='children'>"ns.predicates+"</"+"span><"+"/li>");
-                      }
+                      $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/span><span class='children'>"+ns.predicates+"<"+"/span><"+"/li>");
                     }
 
                     $("li.level0").click(l0click);
 
                     // do we need to recurse?
-                    if (data.namespaces.page < data.namespaces.pages) {
+                    if (false && data.namespaces.page < data.namespaces.pages) {
                       var page = data.namespaces.page+1;
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
@@ -51,8 +66,11 @@
                       // Add and initialise the list element and the div
                       // container that's used to allow scrolling
                       $(this).append("<ul><div><"+"/div><"+"/ul>");
+                      $(this).find("ul").css({
+                        height:"100%",
+                      });
                       $(this).find("ul div").css({
-                        width: "250",
+                        width:"250px",
                         height:"100%",
                         overflowX:"hidden",
                         overflowY:"scroll"
@@ -105,6 +123,9 @@
                     if (!$(this).children("ul").length) {
                       load = true;
                       $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"'><div><"+"/div><"+"/ul>");
+                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate).css({
+                        height:"100%",
+                      });
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").css({
                         width: "250",
                         height:"100%",
@@ -165,8 +186,8 @@
       $("ul#top div").hide();
       $("ul#top div#load").show();
 
-//       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
-//         l0json);
+      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
+        l0json);
 
       tag = window.location.search.substr(1);
       if (tag) {
@@ -247,6 +268,14 @@
   
   <p>TODO: make ... work in predicates+values / sort by count (total or child) / offer all namespaces browser / debug wonky clicks /<br>
            final column links to picture view / take arguments for initial namespace/predicate (ta yoz)</p>
+
+  <p>Show <a href="#" onclick="javascript:$('span.children').show(); $('span.count').hide(); return false;">children</a>
+        | <a href="#" onclick="javascript:$('span.count').show(); $('span.children').hide(); return false;">count</a>.
+        
+          <a href="#" onclick="javascript:hide_uncommon(); return false;">Hide uncommon namespaces</a> 
+        | <a href="#" onclick="javascript:show_uncommon(); return false;">Show uncommon namespaces</a> 
+  </p>
+
 </div>
 
 <div style="position:relative; left:-250px;">
