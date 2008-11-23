@@ -13,15 +13,6 @@
     var selected_predicate;
 
     function hide_uncommon() {
-      console.log("hiding uncommon namespaces");
-      $("li.level0").each(function() {
-        count = $(this).children("span.count").text();
-          console.log($(this).text()+", "+count);
-        if (count < 10) {
-          $(this).addClass("uncommon");
-        }
-      });
-
       $("li.uncommon").slideUp();
     }
 
@@ -36,9 +27,13 @@
                     for (var index = 0; index < data.namespaces.namespace.length; index++) {
                       var ns = data.namespaces.namespace[index]
                       $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/span><span class='children'>"+ns.predicates+"<"+"/span><"+"/li>");
+                      if (ns.usage < 10) {
+                        $("li.level0:last").addClass("uncommon");
+                      }
                     }
 
                     $("li.level0").click(l0click);
+                    $("li.uncommon").hide();
 
                     // do we need to recurse?
                     if (false && data.namespaces.page < data.namespaces.pages) {
@@ -50,7 +45,10 @@
                       $("ul#top div#load").hide();
 
                       if (initial['namespace']) {
-                        console.log("need to highlight '"+initial['namespace']+"'");
+                        offset = $('li.level0:contains('+initial['namespace']+'):first').offset().top;
+                        offset = offset-($('ul#top').offset().top);
+                        $('ul#top div').attr({scrollTop:offset});
+                        $('li.level0:contains('+initial['namespace']+'):first').click();
                       }                        
                     }
                   };
@@ -113,6 +111,13 @@
                     }
 
                     $("li.level1").click(l1click)
+
+                    if (initial['predicate']) {
+                      offset = $('li.level1:contains('+initial['predicate']+'):first').offset().top;
+                      offset = offset-($('ul#top').offset().top);
+                      $('li#'+selected_namespace+"ul div").attr({scrollTop:offset});
+                      $('li.level1:contains('+initial['predicate']+'):first').click();
+                    }                        
                   };
 
     var l1click = function(){
