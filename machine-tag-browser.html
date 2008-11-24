@@ -11,6 +11,7 @@
     // TODO - shouldn't be globals, should pass state around in closures
     var selected_namespace;
     var selected_predicate;
+    var selected_tag;
 
     function hide_uncommon() {
       $("li.uncommon").slideUp();
@@ -26,7 +27,7 @@
                     // console.log(data);
                     for (var index = 0; index < data.namespaces.namespace.length; index++) {
                       var ns = data.namespaces.namespace[index]
-                      $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'>"+ns.usage+"<"+"/span><span class='children'>"+ns.predicates+"<"+"/span><"+"/li>");
+                      $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'> "+ns.usage+"<"+"/span><span class='children'>"+ns.predicates+"<"+"/span><"+"/li>");
                       if (ns.usage < 10) {
                         $("li.level0:last").addClass("uncommon");
                       }
@@ -44,7 +45,7 @@
                       $("ul#top div").show();
                       $("ul#top div#load").hide();
 
-                      if (initial['namespace']) {
+                      if ($('li.level0:contains('+initial['namespace']+")").length) {
                         offset = $('li.level0:contains('+initial['namespace']+'):first').offset().top;
                         offset = offset-($('ul#top').offset().top);
                         $('ul#top div').attr({scrollTop:offset});
@@ -85,10 +86,10 @@
 
                     if (load) {
                       // show a spinner
-                      $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
+                      $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:109px;'>");
 
                       // actually call Flickr's API
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&api_key="+apikey+"&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l1json
                       );
                     }
@@ -112,7 +113,7 @@
 
                     $("li.level1").click(l1click)
 
-                    if (initial['predicate']) {
+                    if ($('li.level1:contains('+initial['predicate']+")").length) {
                       offset = $('li.level1:contains('+initial['predicate']+'):first').offset().top;
                       offset = offset-($('ul#top').offset().top);
                       $('li#'+selected_namespace+"ul div").attr({scrollTop:offset});
@@ -146,9 +147,9 @@
                     $(this).children("ul").show();
 
                     if (load) {
-                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:109px;'>");
+                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:109px;'>");
 
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l2json
                       );
                     }
@@ -161,14 +162,73 @@
 
                     for (var index = 0; index < data.values.value.length; index++) {
                       var value = data.values.value[index]
-                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li class='level2'><a href='http://flickr.com/photos/tags/"+selected_namespace+":"+selected_predicate+"="+value._content+"/'>"+value._content+"<"+"/a> <span class='count'>"+value.usage+"<"+"/span><"+"/li>");
+                      $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li id='"+selected_namespace+"-"+selected_predicate+"-"+value._content.replace(/ /g, "-")+"' class='level2'>"+value._content+' <span class="count">'+value.usage+"<"+"/span><"+"/li>");
                     }
 
                     if (data.values.page < data.values.pages) {
                       var more = data.values.total-data.values.perpage
                       $("ul#"+selected_namespace+"_"+selected_predicate+" div").append("<li>... ("+more+" values not shown)<"+"/li>");
                     }
-                    $("li.level2").click(function() { window.location.href = $(this).find('a').attr('href'); })
+                    $("li.level2").click(l2click);
+
+                    if ($('li.level2:contains('+initial['value']+")").length) {
+                      console.log("selecting initial value "+initial['value']);
+                      offset = $('li.level2:contains('+initial['value']+'):first').offset().top;
+                      offset = offset-($('ul#top').offset().top);
+                      $('ul#'+selected_namespace+"_"+selected_predicate+" div").attr({scrollTop:offset});
+                      $('li.level2:contains('+initial['value']+'):first').click();
+                    }                        
+                  };
+                  
+    var l2click = function(data) {
+                    selected_tag = $(this).attr("id");
+                    // ns = $(this).parent().parent().parent().attr("id");
+                    console.log("selected tag "+selected_tag);
+
+                    var load = false;
+                    if (!$(this).children("ul").length) {
+                      load = true;
+                      $(this).append("<ul id='"+selected_tag+"'><div><"+"/div><"+"/ul>");
+                      $(this).find("ul#"+selected_tag).css({
+                        width: "100px",
+                        height:"100%",
+                      });
+                      $(this).find("ul#"+selected_tag+" div").css({
+                        width: "100px",
+                        height:"100%",
+                        overflowX:"hidden",
+                        overflowY:"scroll"
+                      });
+                    };
+
+                    $(this).siblings().css({backgroundColor:"#fff"});
+                    $(this).css({backgroundColor:"rgb(27,115,213)"});
+
+                    $(this).siblings().find("ul").hide();
+                    $(this).children("ul").show();
+
+                    if (load) {
+                      $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:34px;'>");
+                      var flickr_tag = selected_tag.replace("-", ":");
+                      flickr_tag = flickr_tag.replace("-", "=");
+                      flickr_tag = flickr_tag.replace(/-/g, " ");
+                      console.log("fetching tag "+flickr_tag);
+
+                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
+                        l3json
+                     );
+                    }
+                  };
+
+    var l3json =  function(data) {
+                    $("li#"+selected_tag+" ul div img").remove();
+
+                    for (var index = 0; index < data.photos.photo.length; index++) {
+                      var p = data.photos.photo[index];
+                      html = '<li id="p_'+p.id+'"><a href="http://flickr.com/photos/'+p.owner+'/'+p.id+'/"><img src="http://farm'+p.farm+'.static.flickr.com/'+p.server+'/'+p.id+'_'+p.secret+'_s.jpg" width="75" height="75" alt="'+p.title+'" border="0"><'+'/a>';
+                      $("li#"+selected_tag+" div").append(html);
+                      $("li#"+selected_tag+" div li").click( function() { window.location = $(this).find('a').attr('href'); } );
+                    }
                   };
 
     if (!window.console) {
@@ -194,11 +254,18 @@
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
-      tag = window.location.search.substr(1);
+      var tag = window.location.search.substr(1);
       if (tag) {
-        items = tag.split(":");
-        initial["namespace"] = items[0];
-        if (items[1]) { initial["predicate"] = items[1] }
+        // TODO split with regex?
+        var items1 = tag.split(":");
+        initial["namespace"] = items1[0];
+        if (items1[1]) {
+          var items2 = items1[1].split("=");
+          initial["predicate"] = items2[0];
+          if (items2[1]) {
+            initial["value"] = items2[1];
+          }
+        }
       }
 
       console.log(initial);
@@ -235,7 +302,7 @@
     }
 
     ul#top {
-      width:750px;
+      width:850px;
     }
 
     li {
@@ -287,7 +354,7 @@
   <ul id="top">
     <div></div>
     <div id='load'>
-      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:292px; left:359px;'>
+      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:359px;'>
     </div>
 </ul>
 
