@@ -271,6 +271,8 @@
         }
       }
 
+      $("a#hide-overlay").click(function() {$("div#overlay").hide();})
+
       console.log(initial);
     });
 
@@ -306,6 +308,10 @@
 
     ul#top {
       width:850px;
+    }
+
+    ul#top.browser {
+      left:0px;
     }
 
     li {
@@ -361,7 +367,7 @@
   <h1>a flickr machine tag explorer</h1>
 </div>
 
-<div style="position:relative; left:-250px;">
+<div style="position:relative;">
   <ul id="top" class="browser">
     <div></div>
     <div id='load'>
@@ -392,6 +398,8 @@
           uncommon namespaces.
 
   </p>
+  
+  <p align="right"><a href="#" id="hide-overlay">Hide this overlay</a></p>
 </div>
 
 <!-- I thought I'd like to know if anyone was watching -->
