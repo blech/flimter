@@ -65,7 +65,7 @@
                       load = true;
                       // Add and initialise the list element and the div
                       // container that's used to allow scrolling
-                      $(this).append("<ul><div><"+"/div><"+"/ul>");
+                      $(this).append("<ul class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul").css({
                         height:"100%",
                       });
@@ -130,7 +130,7 @@
                     var load = false;
                     if (!$(this).children("ul").length) {
                       load = true;
-                      $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"'><div><"+"/div><"+"/ul>");
+                      $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate).css({
                         height:"100%",
                       });
@@ -191,7 +191,7 @@
                     var load = false;
                     if (!$(this).children("ul").length) {
                       load = true;
-                      $(this).append("<ul id='"+selected_tag+"'><div><"+"/div><"+"/ul>");
+                      $(this).append("<ul id='"+selected_tag+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_tag).css({
                         width: "100px",
                         height:"100%",
@@ -243,7 +243,7 @@
     $(document).ready( function() {
       // $("ul#top").wrapInner(document.createElement("div"));
       // sod it, do this by hand, then set CSS by jQuery
-      $("ul").height($(window).height()-$('div#blurb').height()-48);
+      $("ul.browser").height($(window).height()-$('div#blurb').height()-48);
 
       $("ul#top div:first").css({
         height:"100%",
@@ -291,7 +291,7 @@
       line-height:10px;
     }
 
-    ul {
+    ul.browser {
       display:block;
       position:absolute;
       top:-1px;
@@ -330,39 +330,68 @@
       text-decoration:none;
       color:#000;
     }
+        
+    div#overlay {
+      padding: 10px;
+      margin: 0px;
+      position: absolute;
+      webkit-opacity:0.5;
+      moz-opacity:0.5;
+      z-index: 1; 
+      top: 40px;
+      right: 40px;
+      width: 25%;
+      color: #999;
+      background-color: black;
+    }
+
+    div#overlay a {
+      color: white;
+    }
+    
+    div ul {
+      padding-left:0px;
+      margin-left:0px;
+    }
     </style>
   <title>flickr machine tag explorer</title>
 </head>
 <body>
 <div id="blurb">
   <h1>a flickr machine tag explorer</h1>
-
-  <p>Browse Flickr machine tag namespaces, predicates and values. For more, see <a href="http://www.flickr.com/groups/api/discuss/72157594497877875/">this post about machine tags</a> and <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4545">this post about new API methods</a> (which enabled this hack to be built).</p>
-
-  <p>A Flickr hack by <a href="http://husk.org/">Paul Mison</a>. Browser view code inspired by <a href="http://code.google.com/p/jquery-column-navigation/">jQuery Column Navigator</a>. Not associated with Flickr (but I use their pulser because I'm lazy, sorry). <a href="http://github.com/blech/flimter/tree/master">At Github.</a></p>
-
-  <p>TODO: make ... work in predicates+values / sort by count (total or child) / offer all namespaces browser / debug wonky clicks /<br>
-           final column links to picture view / take arguments for initial namespace/predicate (ta yoz)</p>
-
-  <p>Show <a href="#" onclick="javascript:$('span.children').show(); $('span.count').hide(); return false;">children</a>
-        | <a href="#" onclick="javascript:$('span.count').show(); $('span.children').hide(); return false;">count</a>.
-
-          <a href="#" onclick="javascript:hide_uncommon(); return false;">Hide uncommon namespaces</a>
-
-        | <a href="#" onclick="javascript:show_uncommon(); return false;">Show uncommon namespaces</a>
-
-  </p>
-
 </div>
 
 <div style="position:relative; left:-250px;">
-  <ul id="top">
+  <ul id="top" class="browser">
     <div></div>
     <div id='load'>
       <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:359px;'>
     </div>
 </ul>
 
+</div>
+
+<div id="overlay">
+  <p>Browse Flickr machine tag namespaces, predicates and values. For more, see <a href="http://www.flickr.com/groups/api/discuss/72157594497877875/">this post about machine tags</a> and <a href="http://tech.groups.yahoo.com/group/yws-flickr/message/4545">this post about new API methods</a> (which enabled this hack to be built).</p>
+
+  <p>A Flickr hack by <a href="http://husk.org/">Paul Mison</a>. Browser view code inspired by <a href="http://code.google.com/p/jquery-column-navigation/">jQuery Column Navigator</a>. Not associated with Flickr (but I use their pulser because I'm lazy, sorry). <a href="http://github.com/blech/flimter/tree/master">At Github.</a></p>
+
+  <p>TODO:</p>
+  
+  <ul>
+    <li>make ... work in predicates+values</li>
+		<li>sort by count (total or child)</li>
+		<li>offer all namespaces browser</li>
+  </ul>
+
+  <p>Show <a href="#" onclick="javascript:$('span.children').show(); $('span.count').hide(); return false;">children</a>
+        | <a href="#" onclick="javascript:$('span.count').show(); $('span.children').hide(); return false;">count</a>.<br>
+
+          <a href="#" onclick="javascript:hide_uncommon(); return false;">Hide</a>
+        | <a href="#" onclick="javascript:show_uncommon(); return false;">show</a>
+          uncommon namespaces.
+
+  </p>
 </div>
 
 <!-- I thought I'd like to know if anyone was watching -->
