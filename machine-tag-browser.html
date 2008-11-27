@@ -14,7 +14,7 @@
     var selected_tag;
 
     var browserwidth = ($(window).width()-16)+"px";
-    var columnwidth = parseInt(($(window).width()-126)/3)+"px";
+    var columnwidth = parseInt(($(window).width()-116)/3)+"px";
 
     var pulserleft_main = parseInt(($(window).width()-48)/2)+"px";
     var pulserleft_column = parseInt(($(window).width()-48-32)/2)+"px";
@@ -42,7 +42,7 @@
                     $("li.uncommon").hide();
 
                     // do we need to recurse?
-                    if (data.namespaces.page < data.namespaces.pages) {
+                    if (false && data.namespaces.page < data.namespaces.pages) {
                       var page = data.namespaces.page+1;
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
@@ -50,11 +50,14 @@
                       $("ul#top div").show();
                       $("ul#top div#load").hide();
 
-                      if ($('li.level0:contains('+initial['namespace']+")").length) {
+                      if (initial['namespace'] && $('li.level0:contains('+initial['namespace']+")").length) {
                         offset = $('li.level0:contains('+initial['namespace']+'):first').offset().top;
                         offset = offset-($('ul#top').offset().top);
                         $('ul#top div').attr({scrollTop:offset});
                         $('li.level0:contains('+initial['namespace']+'):first').click();
+
+                        // reset initial hash
+                        delete initial['namespace'];
                       }
 
                     }
@@ -63,6 +66,7 @@
     var l0click = function(){
                     // TODO sort out commonalities here and in l1click
                     selected_namespace = $(this).attr("id");
+                    set_hash(selected_namespace);
 
                     // Figure out if we've already asked for this predicate
                     var load = false;
@@ -126,12 +130,16 @@
                       offset = offset-($('ul#top').offset().top);
                       $('li#'+selected_namespace+"ul div").attr({scrollTop:offset});
                       $('li.level1:contains('+initial['predicate']+'):first').click();
+
+                      // reset initial hash
+                      initial['predicate'] = undefined;
                     }
 
                   };
 
     var l1click = function(){
                     selected_predicate = $(this).attr("id");
+                    set_hash(selected_namespace+":"+selected_predicate);
                     // ns = $(this).parent().parent().parent().attr("id");
 
                     var load = false;
@@ -187,13 +195,22 @@
                       offset = offset-($('ul#top').offset().top);
                       $('ul#'+selected_namespace+"_"+selected_predicate+" div").attr({scrollTop:offset});
                       $('li.level2:contains('+initial['value']+'):first').click();
+
+                      // reset initial hash
+                      initial['value'] = undefined;
                     }
 
                   };
 
     var l2click = function(data) {
                     selected_tag = $(this).attr("id");
-                    // ns = $(this).parent().parent().parent().attr("id");
+
+                    var flickr_tag = selected_tag.replace("-", ":");
+                    flickr_tag = flickr_tag.replace("-", "=");
+
+                    set_hash(flickr_tag);
+
+                    flickr_tag = flickr_tag.replace(/-/g, " ");
 
                     var load = false;
                     if (!$(this).children("ul").length) {
@@ -201,7 +218,7 @@
                       $(this).append("<ul id='"+selected_tag+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_tag).css({
                         left:columnwidth,
-                        width:"110px",
+                        width:"100px",
                         height:"100%"
                       });
                       $(this).find("ul#"+selected_tag+" div").css({
@@ -220,31 +237,40 @@
 
                     if (load) {
                       $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:39px;'>");
-                      var flickr_tag = selected_tag.replace("-", ":");
-                      flickr_tag = flickr_tag.replace("-", "=");
-                      flickr_tag = flickr_tag.replace(/-/g, " ");
 
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
                         l3json
                      );
                     }
+                    
+                    return false;
                   };
 
     var l3json =  function(data) {
                     $("li#"+selected_tag+" ul div img").remove();
 
+                    var flickr_tag = selected_tag.replace("-", ":");
+                    flickr_tag = flickr_tag.replace("-", "=");
+                    flickr_tag = flickr_tag.replace(/-/g, " ");
+
+                    $("li#"+selected_tag+" div").append("<li id='p_all'><a href='http://flickr.com/photos/tags/"+flickr_tag+"'>All photos<"+"/a>");
+
                     for (var index = 0; index < data.photos.photo.length; index++) {
                       var p = data.photos.photo[index];
                       html = '<li id="p_'+p.id+'"><a href="http://flickr.com/photos/'+p.owner+'/'+p.id+'/"><img src="http://farm'+p.farm+'.static.flickr.com/'+p.server+'/'+p.id+'_'+p.secret+'_s.jpg" width="75" height="75" alt="'+p.title+'" border="0"><'+'/a>';
                       $("li#"+selected_tag+" div").append(html);
-                      $("li#"+selected_tag+" div li").click( function() { window.location = $(this).find('a').attr('href'); } );
                     }
+                    $("li#"+selected_tag+" ul div li").click( function() { window.location = $(this).find('a').attr('href'); } );
                   };
 
     if (!window.console) {
       window.console = {
         'log':function() {}
       }
+    }
+
+    function set_hash(text) {
+      window.location.hash = "tag="+text;
     }
 
     $(document).ready( function() {
@@ -271,7 +297,8 @@
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
-      var tag = window.location.search.substr(1);
+      var tag = window.location.hash.substr(7) || window.location.search.substr(1);;
+
       if (tag) {
         // TODO split with regex?
         var items1 = tag.split(":");
@@ -280,7 +307,7 @@
           var items2 = items1[1].split("=");
           initial["predicate"] = items2[0];
           if (items2[1]) {
-            initial["value"] = items2[1];
+            initial["value"] = items2[1].replace(/-/g, " ");
           }
         }
       }
@@ -357,8 +384,8 @@
       -moz-opacity:0.8;
       filter: alpha(opacity=85);
       z-index: 1; 
-      bottom: 12px;
-      right: 6px;
+      bottom: 32px;
+      right: 26px;
       width: 30%;
       color: #999;
       background-color: black;
