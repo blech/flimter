@@ -13,6 +13,12 @@
     var selected_predicate;
     var selected_tag;
 
+    var browserwidth = ($(window).width()-16)+"px";
+    var columnwidth = parseInt(($(window).width()-126)/3)+"px";
+
+    var pulserleft_main = parseInt(($(window).width()-48)/2)+"px";
+    var pulserleft_column = parseInt(($(window).width()-48-32)/2)+"px";
+
     function hide_uncommon() {
       $("li.uncommon").slideUp();
     }
@@ -66,10 +72,11 @@
                       // container that's used to allow scrolling
                       $(this).append("<ul class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul").css({
-                        height:"100%",
+                        left:columnwidth,
+                        height:"100%"
                       });
                       $(this).find("ul div").css({
-                        width:"250px",
+                        width:columnwidth,
                         height:"100%",
                         overflowX:"hidden",
                         overflowY:"scroll"
@@ -86,7 +93,7 @@
 
                     if (load) {
                       // show a spinner
-                      $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:109px;'>");
+                      $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
                       // actually call Flickr's API
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
@@ -131,7 +138,7 @@
                       load = true;
                       $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate).css({
-                        height:"100%",
+                        height:"100%"
                       });
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").css({
                         width: "250",
@@ -148,7 +155,7 @@
                     $(this).children("ul").show();
 
                     if (load) {
-                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:109px;'>");
+                      $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l2json
@@ -191,7 +198,7 @@
                       $(this).append("<ul id='"+selected_tag+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_tag).css({
                         width: "100px",
-                        height:"100%",
+                        height:"100%"
                       });
                       $(this).find("ul#"+selected_tag+" div").css({
                         width: "100px",
@@ -208,7 +215,7 @@
                     $(this).children("ul").show();
 
                     if (load) {
-                      $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:34px;'>");
+                      $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:39px;'>");
                       var flickr_tag = selected_tag.replace("-", ":");
                       flickr_tag = flickr_tag.replace("-", "=");
                       flickr_tag = flickr_tag.replace(/-/g, " ");
@@ -237,13 +244,20 @@
     }
 
     $(document).ready( function() {
-      // $("ul#top").wrapInner(document.createElement("div"));
-      // sod it, do this by hand, then set CSS by jQuery
+      // size and position browser elements
       $("ul.browser").height($(window).height()-$('div#blurb').height()-48);
+
+      $("ul#top").css({
+        width: browserwidth
+      });
+
+      $("div#load img").css({
+        left: pulserleft_main
+      });
 
       $("ul#top div:first").css({
         height:"100%",
-        width:"250px",
+        width:columnwidth,
         overflowX:"hidden",
         overflowY:"scroll"
       });
@@ -339,8 +353,8 @@
       -moz-opacity:0.8;
       filter: alpha(opacity=85);
       z-index: 1; 
-      bottom: 40px;
-      right: 40px;
+      bottom: 12px;
+      right: 6px;
       width: 30%;
       color: #999;
       background-color: black;
@@ -366,7 +380,7 @@
   <ul id="top" class="browser">
     <div></div>
     <div id='load'>
-      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:359px;'>
+      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:100px;'>
     </div>
 </ul>
 
