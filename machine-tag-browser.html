@@ -73,6 +73,7 @@
                       $(this).append("<ul class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul").css({
                         left:columnwidth,
+                        width:columnwidth,
                         height:"100%"
                       });
                       $(this).find("ul div").css({
@@ -138,6 +139,8 @@
                       load = true;
                       $(this).append("<ul id='"+selected_namespace+"_"+selected_predicate+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate).css({
+                        left:columnwidth,
+                        width:columnwidth,
                         height:"100%"
                       });
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").css({
@@ -197,7 +200,8 @@
                       load = true;
                       $(this).append("<ul id='"+selected_tag+"' class='browser'><div><"+"/div><"+"/ul>");
                       $(this).find("ul#"+selected_tag).css({
-                        width: "100px",
+                        left:columnwidth,
+                        width:columnwidth,
                         height:"100%"
                       });
                       $(this).find("ul#"+selected_tag+" div").css({
