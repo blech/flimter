@@ -24,7 +24,6 @@
     var l0json =  function(data){
                     // TODO consider metaprogramming for json handers
 
-                    // console.log(data);
                     for (var index = 0; index < data.namespaces.namespace.length; index++) {
                       var ns = data.namespaces.namespace[index]
                       $("ul#top div:first").append("<li class='level0' id='"+ns._content+"'>"+ns._content+" <span class='count'> "+ns.usage+"<"+"/span><span class='children'>"+ns.predicates+"<"+"/span><"+"/li>");
@@ -174,7 +173,6 @@
                     $("li.level2").click(l2click);
 
                     if ($('li.level2:contains('+initial['value']+")").length) {
-                      console.log("selecting initial value "+initial['value']);
                       offset = $('li.level2:contains('+initial['value']+'):first').offset().top;
                       offset = offset-($('ul#top').offset().top);
                       $('ul#'+selected_namespace+"_"+selected_predicate+" div").attr({scrollTop:offset});
@@ -186,7 +184,6 @@
     var l2click = function(data) {
                     selected_tag = $(this).attr("id");
                     // ns = $(this).parent().parent().parent().attr("id");
-                    console.log("selected tag "+selected_tag);
 
                     var load = false;
                     if (!$(this).children("ul").length) {
@@ -215,7 +212,6 @@
                       var flickr_tag = selected_tag.replace("-", ":");
                       flickr_tag = flickr_tag.replace("-", "=");
                       flickr_tag = flickr_tag.replace(/-/g, " ");
-                      console.log("fetching tag "+flickr_tag);
 
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
                         l3json
@@ -272,8 +268,6 @@
       }
 
       $("a#hide-overlay").click(function() {$("div#overlay").hide();})
-
-      console.log(initial);
     });
 
   </script>
