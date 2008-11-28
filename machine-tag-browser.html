@@ -127,14 +127,14 @@
 
                     $("li.level1").click(l1click)
 
-                    if ($('li.level1:contains('+initial['predicate']+")").length) {
+                    if (initial['predicate'] && $('li.level1:contains('+initial['predicate']+")").length) {
                       offset = $('li.level1:contains('+initial['predicate']+'):first').offset().top;
                       offset = offset-($('ul#top').offset().top);
                       $('li#'+selected_namespace+"ul div").attr({scrollTop:offset});
                       $('li.level1:contains('+initial['predicate']+'):first').click();
 
                       // reset initial hash
-                      initial['predicate'] = undefined;
+                      delete initial['predicate'];
                     }
 
                   };
@@ -192,14 +192,14 @@
                     }
                     $("li.level2").click(l2click);
 
-                    if ($('li.level2:contains('+initial['value']+")").length) {
+                    if (initial['value'] && $('li.level2:contains('+initial['value']+")").length) {
                       offset = $('li.level2:contains('+initial['value']+'):first').offset().top;
                       offset = offset-($('ul#top').offset().top);
                       $('ul#'+selected_namespace+"_"+selected_predicate+" div").attr({scrollTop:offset});
                       $('li.level2:contains('+initial['value']+'):first').click();
 
                       // reset initial hash
-                      initial['value'] = undefined;
+                      delete initial['value'];
                     }
 
                   };
@@ -255,7 +255,7 @@
                     flickr_tag = flickr_tag.replace("-", "=");
                     flickr_tag = flickr_tag.replace(/-/g, " ");
 
-                    $("li#"+selected_tag+" div").append("<li id='p_all'><a href='http://flickr.com/photos/tags/"+flickr_tag+"'>All photos<"+"/a>");
+                    $("li#"+selected_tag+" div").append("<li id='p_all'><a href='http://flickr.com/photos/tags/"+flickr_tag+"'>All photos &rarr;<"+"/a>");
 
                     for (var index = 0; index < data.photos.photo.length; index++) {
                       var p = data.photos.photo[index];
