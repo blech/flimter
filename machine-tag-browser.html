@@ -19,6 +19,8 @@
     var pulserleft_main = parseInt(($(window).width()-48)/2)+"px";
     var pulserleft_column = parseInt(($(window).width()-48-32)/2)+"px";
 
+    var debug = false;
+
     function hide_uncommon() {
       $("li.uncommon").slideUp();
     }
@@ -42,7 +44,7 @@
                     $("li.uncommon").hide();
 
                     // do we need to recurse?
-                    if (false && data.namespaces.page < data.namespaces.pages) {
+                    if (!debug && data.namespaces.page < data.namespaces.pages) {
                       var page = data.namespaces.page+1;
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
