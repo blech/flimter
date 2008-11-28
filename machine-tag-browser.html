@@ -299,7 +299,7 @@
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
-      var tag = window.location.hash.substr(7) || window.location.search.substr(1);;
+      var tag = window.location.hash.substr(6) || window.location.search.substr(1);;
 
       if (tag) {
         // TODO split with regex?
