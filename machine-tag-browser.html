@@ -46,6 +46,8 @@
                     // do we need to recurse?
                     if (!debug && data.namespaces.page < data.namespaces.pages) {
                       var page = data.namespaces.page+1;
+                      $("div#load p#msg").text("loading namespaces (page "+page+")");
+
                       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
                     } else {
@@ -283,9 +285,9 @@
         width: browserwidth
       });
 
-      $("div#load img").css({
-        left: pulserleft_main
-      });
+      // $("div#load img").css({
+      //   left: pulserleft_main
+      // });
 
       $("ul#top div:first").css({
         height:"100%",
@@ -295,6 +297,8 @@
       });
       $("ul#top div").hide();
       $("ul#top div#load").show();
+
+      $("div#load p#msg").text("loading namespaces (page 1)");
 
       $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
@@ -412,8 +416,9 @@
 <div style="position:relative;">
   <ul id="top" class="browser">
     <div></div>
-    <div id='load'>
-      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:100px;'>
+    <div id='load' style="text-align:center;">
+      <img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;'><br>
+      <p id='msg' style="position:relative; top:150px;">initialising</p>
     </div>
 </ul>
 
