@@ -48,7 +48,7 @@
                       var page = data.namespaces.page+1;
                       $("div#load p#msg").text("loading namespaces (page "+page+")");
 
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
                     } else {
                       $("ul#top div").show();
@@ -105,7 +105,7 @@
                       $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
                       // actually call Flickr's API
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l1json
                       );
                     }
@@ -172,7 +172,7 @@
                     if (load) {
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l2json
                       );
                     }
@@ -242,7 +242,7 @@
                     if (load) {
                       $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:39px;'>");
 
-                      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
                         l3json
                      );
                     }
@@ -257,11 +257,11 @@
                     flickr_tag = flickr_tag.replace("-", "=");
                     flickr_tag = flickr_tag.replace(/-/g, " ");
 
-                    $("li#"+selected_tag+" div").append("<li id='p_all'><a href='http://flickr.com/photos/tags/"+flickr_tag+"'>All photos &rarr;<"+"/a>");
+                    $("li#"+selected_tag+" div").append("<li id='p_all'><a href='https://flickr.com/photos/tags/"+flickr_tag+"'>All photos &rarr;<"+"/a>");
 
                     for (var index = 0; index < data.photos.photo.length; index++) {
                       var p = data.photos.photo[index];
-                      html = '<li id="p_'+p.id+'"><a href="http://flickr.com/photos/'+p.owner+'/'+p.id+'/"><img src="http://farm'+p.farm+'.static.flickr.com/'+p.server+'/'+p.id+'_'+p.secret+'_s.jpg" width="75" height="75" alt="'+p.title+'" border="0"><'+'/a>';
+                      html = '<li id="p_'+p.id+'"><a href="https://flickr.com/photos/'+p.owner+'/'+p.id+'/"><img src="https://farm'+p.farm+'.static.flickr.com/'+p.server+'/'+p.id+'_'+p.secret+'_s.jpg" width="75" height="75" alt="'+p.title+'" border="0"><'+'/a>';
                       $("li#"+selected_tag+" div").append(html);
                     }
                     $("li#"+selected_tag+" ul div li").click( function() { window.location = $(this).find('a').attr('href'); } );
@@ -300,7 +300,7 @@
 
       $("div#load p#msg").text("loading namespaces (page 1)");
 
-      $.getJSON("http://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
+      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
       var tag = window.location.hash.substr(6) || window.location.search.substr(1);;
