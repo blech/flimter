@@ -6,6 +6,7 @@
   <script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
   <script type="text/javascript">
     var apikey = "32ecf7b4565d138bd5ca10e10ab7fae5"; // yes, this is probably bad, but you don't get the secret at least
+    var urlroot = "https://api.flickr.com/services/rest/"
     var initial = {};
 
     // TODO - shouldn't be globals, should pass state around in closures
@@ -48,7 +49,7 @@
                       var page = data.namespaces.page+1;
                       $("div#load p#msg").text("loading namespaces (page "+page+")");
 
-                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON(urlroot+"?method=flickr.machinetags.getNamespaces&page="+page+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l0json);
                     } else {
                       $("ul#top div").show();
@@ -105,7 +106,7 @@
                       $(this).find("ul div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
                       // actually call Flickr's API
-                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON(urlroot+"?method=flickr.machinetags.getPredicates&namespace="+selected_namespace+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l1json
                       );
                     }
@@ -172,7 +173,7 @@
                     if (load) {
                       $(this).find("ul#"+selected_namespace+"_"+selected_predicate+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px;  left:"+pulserleft_column+";'>");
 
-                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON(urlroot+"?method=flickr.machinetags.getValues&namespace="+selected_namespace+"&predicate="+selected_predicate+"&api_key="+apikey+"&format=json&jsoncallback=?",
                         l2json
                       );
                     }
@@ -242,7 +243,7 @@
                     if (load) {
                       $(this).find("ul#"+selected_tag+" div").html("<img src='http://l.yimg.com/g/images/pulser2.gif' style='position:relative; top:100px; left:39px;'>");
 
-                      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
+                      $.getJSON(urlroot+"?method=flickr.photos.search&tags="+flickr_tag+"&per_page=20&extras=owner_name&api_key="+apikey+"&format=json&jsoncallback=?",
                         l3json
                      );
                     }
@@ -300,7 +301,7 @@
 
       $("div#load p#msg").text("loading namespaces (page 1)");
 
-      $.getJSON("https://api.flickr.com/services/rest/?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
+      $.getJSON(urlroot+"?method=flickr.machinetags.getNamespaces&api_key="+apikey+"&format=json&jsoncallback=?",
         l0json);
 
       var tag = window.location.hash.substr(6) || window.location.search.substr(1);;
